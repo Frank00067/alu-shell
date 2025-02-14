@@ -23,5 +23,5 @@ case "$1" in
   restart) restart;;                              
   *) echo "Usage: manage_my_process {start|stop|r\
 estart}"                                                                                         
-      ;;                                           
+      ;;                                           
 esac
