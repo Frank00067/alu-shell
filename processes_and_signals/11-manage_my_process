@@ -1,37 +1,39 @@
 #!/usr/bin/env bash
 #Bash (init) script that manages `manage_my_process`
-#   When passed the argument `start`:
-#     - Starts `manage_my_process`
-#     - Creates a file containings its PID in `/var/run/my_process.pid`
-#     - Displays "manage_my_process started"
-#   When passed the argument `stop`:
-#     - Stops `manage_my_process`
-#     - Deletes the file `/var/run/my_process.pid`
-#     - Displays "manage_my_process stopped"
-#   When passing the argument `restart`:
-#     - Stops `manage_my_process`
-#     - Deletes the file `/var/run/my_process.pid`
-#     - Starts `manage_my_process`
-#     - Creates a file containing its PID in `/var/run/my_process.pid`
-#     - Displays "manage_my_process restarted"
-#   Else, displays  "Usage: manage_my_process {start|stop|restart}"
+# Requirements:
+#	-When passing the argument 'start':
+#	     *Starts 'manage_my_process'
+#	     *Creates a file containing its PID in '/var/run/my_process.pid'
+#	     *Displays 'manage_my_process started'
+#	-When passing the argument 'stop':
+#	     *Stops 'manage_my_process'
+#	     *Deletes the file '/var/run/my_process.pid'
+#	     *Displays 'manage_my_process stopped'
+#	-When passing the argument 'restart':
+#	     *Stops 'manage_my_process'
+#	     *Deletes the file '/var/run/my_process.pid'
+#	     *Starts 'manage_my_process'
+#	     *Creates a file containing its PID in '/var/run/my_process.pid'
+#	     *Displays 'manage_my_process restarted'
+#	-Displays 'Usage: manage_my_process {start|stop|restart}' if any other argument or no argument is passed
 
-killer() {
-    kill "$(pgrep -f /manage_my_process)"
-    rm -f /var/run/my_process.pid &
-}
-
-if [[ "$1" == "start" ]]
+if [ "${1}" == "start" ]
 then
     ./manage_my_process &
+    touch /var/run/my_process.pid
     echo "$!" > /var/run/my_process.pid
     echo "manage_my_process started"
-elif [[ "$1" == "stop" ]]
+elif [ "${1}" == "stop" ]
 then
-    killer; echo "manage_my_process stopped";
-elif [[ "$1" == "restart" ]]
+    echo "manage_my_process stopped"
+    kill "$(cat /var/run/my_process.pid)"
+    rm /var/run/my_process.pid
+elif [ "${1}" == "restart" ]
 then
-    killer; ./manage_my_process &
+    kill "$(cat /var/run/my_process.pid)"
+    rm /var/run/my_process.pid
+    ./manage_my_process &
+    touch /var/run/my_process.pid
     echo "$!" > /var/run/my_process.pid
     echo "manage_my_process restarted"
 else
